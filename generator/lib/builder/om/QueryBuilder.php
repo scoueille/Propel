@@ -117,6 +117,8 @@ class QueryBuilder extends OMBuilder
  * @method $queryClass leftJoin(\$relation) Adds a LEFT JOIN clause to the query
  * @method $queryClass rightJoin(\$relation) Adds a RIGHT JOIN clause to the query
  * @method $queryClass innerJoin(\$relation) Adds a INNER JOIN clause to the query
+ * @method $queryClass setModelAlias(\$modelAlias, \$useAliasInSQL = false) Sets the alias for the model in this query
+ * @method $queryClass _or()
  *";
 
         // magic XXXjoinYYY() methods, for IDE completion
@@ -129,6 +131,16 @@ class QueryBuilder extends OMBuilder
  * @method $queryClass innerJoin" . $relationName . "(\$relationAlias = null) Adds a INNER JOIN clause to the query using the " . $relationName . " relation
  *";
         }
+        foreach ($this->getTable()->getForeignKeys() as $fk) {
+            $relationName = $this->getFKPhpNameAffix($fk);
+
+            $script .= "
+ * @method $queryClass leftJoinWith" . $relationName . "() Adds a LEFT JOIN clause to the query using the " . $relationName . " relation
+ * @method $queryClass rightJoinWith" . $relationName . "() Adds a RIGHT JOIN clause to the query using the " . $relationName . " relation
+ * @method $queryClass innerJoinWith" . $relationName . "() Adds a INNER JOIN clause to the query using the " . $relationName . " relation
+ * @method $queryClass joinWith" . $relationName . "() Adds a INNER JOIN clause to the query using the " . $relationName . " relation
+ *";
+        }
         foreach ($this->getTable()->getReferrers() as $refFK) {
             $relationName = $this->getRefFKPhpNameAffix($refFK);
 
@@ -136,6 +148,15 @@ class QueryBuilder extends OMBuilder
  * @method $queryClass leftJoin" . $relationName . "(\$relationAlias = null) Adds a LEFT JOIN clause to the query using the " . $relationName . " relation
  * @method $queryClass rightJoin" . $relationName . "(\$relationAlias = null) Adds a RIGHT JOIN clause to the query using the " . $relationName . " relation
  * @method $queryClass innerJoin" . $relationName . "(\$relationAlias = null) Adds a INNER JOIN clause to the query using the " . $relationName . " relation
+ *";
+        }
+        foreach ($this->getTable()->getReferrers() as $refFK) {
+            $relationName = $this->getRefFKPhpNameAffix($refFK);
+
+            $script .= "
+ * @method $queryClass leftJoinWith" . $relationName . "() Adds a LEFT JOIN clause to the query using the " . $relationName . " relation
+ * @method $queryClass rightJoinWith" . $relationName . ") Adds a RIGHT JOIN clause to the query using the " . $relationName . " relation
+ * @method $queryClass innerJoinWith" . $relationName . "() Adds a INNER JOIN clause to the query using the " . $relationName . " relation
  *";
         }
 
@@ -157,9 +178,12 @@ class QueryBuilder extends OMBuilder
         }
         $script .= "
  *";
+        $script .= "
+ * @method ".$modelClass."[]|array find(PropelPDO \$con = null) Return $modelClass objects matching the query";
+
         foreach ($this->getTable()->getColumns() as $column) {
             $script .= "
- * @method array findBy" . $column->getPhpName() . "(" . $column->getPhpType() . " \$" . $column->getName() . ") Return $modelClass objects filtered by the " . $column->getName() . " column";
+ * @method ".$modelClass."[]|array findBy" . $column->getPhpName() . "(" . $column->getPhpType() . " \$" . $column->getName() . ") Return $modelClass objects filtered by the " . $column->getName() . " column";
         }
 
         if ($this->getBuildProperty('addClassLevelComment')) {
