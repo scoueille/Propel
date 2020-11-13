@@ -1420,7 +1420,7 @@ abstract class " . $this->getClassname() . " extends " . $parentClass . " ";
             \$this->$clo = stream_get_contents(\$row[0]);";
         } elseif ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
             $script .= "
-            if (\$row[0] !== null) {
+            if (isset(\$row[0])) {
                 \$this->$clo = fopen('php://memory', 'r+');
                 fwrite(\$this->$clo, \$row[0]);
                 rewind(\$this->$clo);
@@ -1429,13 +1429,13 @@ abstract class " . $this->getClassname() . " extends " . $parentClass . " ";
             }";
         } elseif ($col->isPhpPrimitiveType()) {
             $script .= "
-            \$this->$clo = (\$row[0] !== null) ? (" . $col->getPhpType() . ") \$row[0] : null;";
+            \$this->$clo = isset(\$row[0]) ? (" . $col->getPhpType() . ") \$row[0] : null;";
         } elseif ($col->isPhpObjectType()) {
             $script .= "
-            \$this->$clo = (\$row[0] !== null) ? new " . $col->getPhpType() . "(\$row[0]) : null;";
+            \$this->$clo = isset(\$row[0]) ? new " . $col->getPhpType() . "(\$row[0]) : null;";
         } else {
             $script .= "
-            \$this->$clo = \$row[0];";
+            \$this->$clo = isset(\$row[0]) ? \$row[0]: null;";
         }
 
         $script .= "
@@ -4125,15 +4125,15 @@ abstract class " . $this->getClassname() . " extends " . $parentClass . " ";
     /**
      * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
-     * @param ForeignKey $crossFK
      */
-    protected function addRefFKRemove(&$script, $refFK)
+    protected function addRefFKRemove(string &$script, ForeignKey $refFK)
     {
         $relatedName = $this->getRefFKPhpNameAffix($refFK, $plural = true);
-        $relatedObjectClassName = $this->getRefFKPhpNameAffix($refFK, $plural = false);
+        $relatedObjectName = $this->getRefFKPhpNameAffix($refFK, $plural = false);
+        $relatedObjectClassName = $refFK->getTable()->getPhpName();
 
         $inputCollection = lcfirst($relatedName . 'ScheduledForDeletion');
-        $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
+        $lowerRelatedObjectName = lcfirst($relatedObjectName);
 
         $collName = $this->getRefFKCollVarName($refFK);
         $relCol = $this->getFKPhpNameAffix($refFK, $plural = false);
@@ -4142,13 +4142,13 @@ abstract class " . $this->getClassname() . " extends " . $parentClass . " ";
 
         $script .= "
     /**
-     * @param	{$relatedObjectClassName} \${$lowerRelatedObjectClassName} The $lowerRelatedObjectClassName object to remove.
-     * @return " . $this->getObjectClassname() . " The current object (for fluent API support)
+     * @param  {$relatedObjectClassName} \${$lowerRelatedObjectName} The $lowerRelatedObjectName object to remove.
+     * @return {$this->getObjectClassname()} The current object (for fluent API support)
      */
-    public function remove{$relatedObjectClassName}(\${$lowerRelatedObjectClassName})
+    public function remove{$relatedObjectName}(\${$lowerRelatedObjectName})
     {
-        if (\$this->get{$relatedName}()->contains(\${$lowerRelatedObjectClassName})) {
-            \$this->{$collName}->remove(\$this->{$collName}->search(\${$lowerRelatedObjectClassName}));
+        if (\$this->get{$relatedName}()->contains(\${$lowerRelatedObjectName})) {
+            \$this->{$collName}->remove(\$this->{$collName}->search(\${$lowerRelatedObjectName}));
             if (null === \$this->{$inputCollection}) {
                 \$this->{$inputCollection} = clone \$this->{$collName};
                 \$this->{$inputCollection}->clear();
@@ -4156,14 +4156,14 @@ abstract class " . $this->getClassname() . " extends " . $parentClass . " ";
 
         if (!$refFK->isComposite() && !$localColumn->isNotNull()) {
             $script .= "
-            \$this->{$inputCollection}[]= \${$lowerRelatedObjectClassName};";
+            \$this->{$inputCollection}[]= \${$lowerRelatedObjectName};";
         } else {
             $script .= "
-            \$this->{$inputCollection}[]= clone \${$lowerRelatedObjectClassName};";
+            \$this->{$inputCollection}[]= clone \${$lowerRelatedObjectName};";
         }
 
         $script .= "
-            \${$lowerRelatedObjectClassName}->set{$relCol}(null);
+            \${$lowerRelatedObjectName}->set{$relCol}(null);
         }
 
         return \$this;
@@ -4282,8 +4282,10 @@ abstract class " . $this->getClassname() . " extends " . $parentClass . " ";
         $lowerRelatedName = lcfirst($relatedName);
         $lowerSingleRelatedName = lcfirst($this->getFKPhpNameAffix($crossFK, $plural = false));
 
-        $middelFks = $refFK->getTable()->getForeignKeys();
-        $isFirstPk = ($middelFks[0]->getForeignTableCommonName() == $this->getTable()->getCommonName());
+        /** @var \ForeignKey $refFK */
+        /** @var \Column[] $middlePks */
+        $middlePks = $refFK->getTable()->getPrimaryKey();
+        $isFirstPk = ($middlePks[0]->getName() === $refFK->getLocalColumnName());
 
         $script .= "
             if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null) {
@@ -4386,7 +4388,8 @@ abstract class " . $this->getClassname() . " extends " . $parentClass . " ";
         $relCol = $this->getFKPhpNameAffix($crossFK, $plural = true);
         $collName = $this->getCrossFKVarName($crossFK);
 
-        $script .= "
+        if ($crossFK->isLocalPrimaryKey()) {
+            $script .= "
     /**
      * Clears out the $collName collection
      *
@@ -4400,6 +4403,26 @@ abstract class " . $this->getClassname() . " extends " . $parentClass . " ";
     {
         \$this->$collName = null; // important to set this to null since that means it is uninitialized
         \$this->{$collName}Partial = null;
+
+        return \$this;
+    }
+";
+            return;
+        }
+
+        $script .= "
+    /**
+     * Clears out the $collName collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return " . $this->getObjectClassname() . " The current object (for fluent API support)
+     * @see        add$relCol()
+     */
+    public function clear$relCol()
+    {
+        \$this->$collName = null; // important to set this to null since that means it is uninitialized
 
         return \$this;
     }

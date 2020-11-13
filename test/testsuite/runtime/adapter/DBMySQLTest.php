@@ -88,13 +88,11 @@ class DBMySQLTest extends DBAdapterTestAbstract
 
     protected function getPdoMock()
     {
-        $con = $this
-            ->getMockBuilder('mockPDO')
-            ->getMock();
+        $con = $this->createMock('mockPDO');
 
-        $con
-            ->expects($this->never())
-            ->method('exec');
+        $con->expects($this->never())
+            ->method('exec')
+            ->willReturn(null);
 
         return $con;
     }

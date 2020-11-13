@@ -13,7 +13,7 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/XMLElement.ph
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class XMLElementTest extends PHPUnit_Framework_TestCase
+class XMLElementTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider providerForGetDefaultValueForArray
@@ -24,18 +24,18 @@ class XMLElementTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $xmlElement->getDefaultValueForArray($value));
     }
 
-    public static function providerForGetDefaultValueForArray()
+    public static function providerForGetDefaultValueForArray(): array
     {
-        return array(
-            array('', null),
-            array(null, null),
-            array('FOO', '||FOO||'),
-            array('FOO, BAR', '||FOO | BAR||'),
-            array('FOO , BAR', '||FOO | BAR||'),
-            array('FOO,BAR', '||FOO | BAR||'),
-            array(' ', null),
-            array(', ', null),
-        );
+        return [
+            ['', ''],
+            [null, null],
+            ['FOO', '||FOO||'],
+            ['FOO, BAR', '||FOO | BAR||'],
+            ['FOO , BAR', '||FOO | BAR||'],
+            ['FOO,BAR', '||FOO | BAR||'],
+            [' ', ''],
+            [', ', ''],
+        ];
     }
 }
 

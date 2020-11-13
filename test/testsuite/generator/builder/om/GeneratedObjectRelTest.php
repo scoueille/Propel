@@ -845,7 +845,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         $books = $author->getBooks();
         $this->assertCount(1, $books);
-        $this->assertEquals('Propel2 Book', reset($books)->getTitle());
+        $this->assertEquals('Propel2 Book', $books->getFirst()->getTitle());
 
         $author->save();
         $book->save();
@@ -891,7 +891,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         $bookSummaries = $book->getBookSummarys();
         $this->assertCount(1, $bookSummaries);
-        $this->assertEquals('summary2 Propel Book', reset($bookSummaries)->getSummary());
+        $this->assertEquals('summary2 Propel Book', $bookSummaries->getFirst()->getSummary());
 
         $book->save();
         $bookSummary2->save();
@@ -934,7 +934,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         BookPeer::clearInstancePool();
 
-        $summary = $this->getMock('BookSummary');
+        $summary = $this->createMock('BookSummary');
         $summary
             ->expects($this->once())
             ->method('isDeleted')

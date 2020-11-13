@@ -1,8 +1,50 @@
 # Changelog Of The Propel 1.x Branch #
 
-## ????-??-??: Version 1.7.2 ##
+## 2020-10-01: Version 2.1.2
 
-n/a
+- [#5](https://github.com/propeller-orm/propeller-orm/pull/5) Fix default value handling for array type columns (Fixes #2)
+
+## 2020-06-22: Version 2.0.2
+
+- [#18](https://github.com/rock-symphony/propel-orm/pull/18) Fix schema parser for Postgres expression-based indexes
+- [#19](https://github.com/rock-symphony/propel-orm/pull/19) Fix Postgres 12 compatibility
+
+## 2020-03-13: Version 2.0.1
+
+- [#13](https://github.com/rock-symphony/propel-orm/pull/13) Fix bug in generated phpDoc for remove{Relation} method
+
+## 2020-03-13: Version 2.0.0
+
+- [#10](https://github.com/rock-symphony/propel-orm/pull/10) Drop PHP 5.6 support
+- [#11](https://github.com/rock-symphony/propel-orm/pull/11) PHP 7.4 compatibility
+
+## 2020-03-01: Version 1.8.5
+
+- [#7](https://github.com/rock-symphony/propel-orm/pull/7) Fix PHP 7.3 compatibility
+- Drop PEAR-related functionality
+
+## 2019-12-31: Version 1.8.4
+
+- ee7aacc7 Fix composer.json error
+
+## 2019-12-31: Version 1.8.3
+
+- 18c70f40 Fix unneeded write to `collXxxPartial` for cross-ref relations [#6](https://github.com/rock-symphony/propel-orm/issues/6)
+
+## 2019-05-30: Version 1.8.2
+
+- e9680864 Fix PHP 7.3 compatibility (count uncountable warning)
+
+## 2019-05-30: Version 1.8.1
+
+- [#5](https://github.com/rock-symphony/propel-orm/pull/5) Fix PHP 7.3 compatibility (switch/continue warning)
+
+## 2019-05-30: Version 1.8.0
+
+- [#4](https://github.com/rock-symphony/propel-orm/pull/4) Improve Postgres support
+- [#3](https://github.com/rock-symphony/propel-orm/pull/3) Fix PHP 7.1 compatibility
+- [#2](https://github.com/rock-symphony/propel-orm/pull/2) Fix many-to-many self-referencing relations bug
+- [#1](https://github.com/rock-symphony/propel-orm/pull/1) Fix `locale` column size limit
 
 ## 2014-02-25: Version 1.7.1 ##
 

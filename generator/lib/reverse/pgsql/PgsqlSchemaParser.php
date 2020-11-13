@@ -175,7 +175,7 @@ class PgsqlSchemaParser extends BaseSchemaParser
                                         att.atttypmod,
                                         att.atthasdef,
                                         att.attnotnull,
-                                        def.adsrc,
+                                        pg_get_expr(def.adbin, def.adrelid) as adsrc,
                                         CASE WHEN att.attndims > 0 THEN 1 ELSE 0 END AS isarray,
                                         CASE
                                             WHEN ty.typname = 'bpchar'
@@ -201,11 +201,6 @@ class PgsqlSchemaParser extends BaseSchemaParser
             $size = null;
             $precision = null;
             $scale = null;
-
-            // Check to ensure that this column isn't an array data type
-            if (((int) $row['isarray']) === 1) {
-                throw new EngineException (sprintf("Array datatypes are not currently supported [%s.%s]", $this->name, $row['attname']));
-            } // if (((int) $row['isarray']) === 1)
 
             $name = $row['attname'];
 
@@ -489,6 +484,10 @@ class PgsqlSchemaParser extends BaseSchemaParser
 
             $arrColumns = explode(' ', $row['indkey']);
             foreach ($arrColumns as $intColNum) {
+                if ($intColNum === '0') {
+                    // `indkey` contains zero for indexes based on expressions, rather than plain columns.
+                    continue;
+                }
                 $stmt2->bindValue(1, $oid);
                 $stmt2->bindValue(2, $intColNum);
                 $stmt2->execute();
