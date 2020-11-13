@@ -32,7 +32,8 @@ class PropelModelPager implements IteratorAggregate, Countable
         $maxRecordLimit = false,
         $results = null,
         $resultsCounter	= 0,
-        $con = null;
+        $con = null,
+        $offset = 0;
 
     public function __construct(ModelCriteria $query, $maxPerPage = 10)
     {
@@ -56,16 +57,18 @@ class PropelModelPager implements IteratorAggregate, Countable
         $hasMaxRecordLimit = ($this->getMaxRecordLimit() !== false);
         $maxRecordLimit = $this->getMaxRecordLimit();
 
+        $this->offset = $this->getQuery()->getOffset();
+
         $qForCount = clone $this->getQuery();
         $count = $qForCount
-            ->offset(0)
+            ->offset($this->offset)
             ->limit(0)
             ->count($this->con);
 
         $this->setNbResults($hasMaxRecordLimit ? min($count, $maxRecordLimit) : $count);
 
         $q = $this->getQuery()
-            ->offset(0)
+            ->offset($this->offset)
             ->limit(0);
 
         if (($this->getPage() == 0 || $this->getMaxPerPage() == 0)) {
@@ -73,7 +76,7 @@ class PropelModelPager implements IteratorAggregate, Countable
         } else {
             $this->setLastPage((int) ceil($this->getNbResults() / $this->getMaxPerPage()));
 
-            $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
+            $offset = $this->offset + ($this->getPage() - 1) * $this->getMaxPerPage();
             $q->offset($offset);
 
             if ($hasMaxRecordLimit) {
