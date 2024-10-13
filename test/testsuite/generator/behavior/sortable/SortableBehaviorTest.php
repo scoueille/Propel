@@ -9,10 +9,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/BookstoreTestBase.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/util/PropelQuickBuilder.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/behavior/sortable/SortableBehavior.php';
-
 /**
  * Tests for SortableBehavior class
  *
@@ -22,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../../../generator/lib/behavior/sortabl
  */
 class SortableBehaviorTest extends BookstoreTestBase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -52,6 +48,8 @@ EOF;
     {
         $peer = new \Test\SortableTest1Peer();
         $peer->shiftRank(1); //should not throw any exception
+
+        $this->expectNotToPerformAssertions();
     }
 
     public function testParameters()

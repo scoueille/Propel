@@ -9,12 +9,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
-require_once dirname(__FILE__) . '/../../../../generator/lib/config/GeneratorConfig.php';
-require_once dirname(__FILE__) . '/../../../../generator/lib/platform/DefaultPlatform.php';
-require_once dirname(__FILE__) . '/../../../../generator/lib/platform/MysqlPlatform.php';
-require_once dirname(__FILE__) . '/../../../tools/helpers/DummyPlatforms.php';
-
 /**
  * Tests for Table model class
  *
@@ -80,10 +74,10 @@ EOF;
         set_include_path($include_path . PATH_SEPARATOR . realpath(dirname(__FILE__) . '/../../../../generator/lib'));
         $xmlToAppData = new XmlToAppData(new DefaultPlatform());
         $config = new GeneratorConfig();
-        $config->setBuildProperties(array(
-            'propel.platform.class' => 'propel.engine.platform.DefaultPlatform',
-            'propel.behavior.timestampable.class' => 'behavior.TimestampableBehavior'
-        ));
+        $config->setBuildProperties([
+            'propel.platform.class'               => DefaultPlatform::class,
+            'propel.behavior.timestampable.class' => TimestampableBehavior::class,
+        ]);
         $xmlToAppData->setGeneratorConfig($config);
         $schema = <<<EOF
 <database name="test1">
@@ -110,7 +104,7 @@ EOF;
         $config = new GeneratorConfig();
 
         $config->setBuildProperties(array(
-            'propel.behavior.autoaddpkbehavior.class' => 'behavior.AutoAddPkBehavior'
+            'propel.behavior.autoaddpkbehavior.class' => AutoAddPkBehavior::class,
         ));
 
         $xmlToAppData->setGeneratorConfig($config);
@@ -161,9 +155,6 @@ CREATE TABLE `bar`
 
     }
 
-    /**
-     * @expectedException EngineException
-     */
     public function testUniqueColumnName()
     {
         $xmlToAppData = new XmlToAppData();
@@ -176,13 +167,13 @@ CREATE TABLE `bar`
     </table>
 </database>
 EOF;
+
+        $this->expectException(EngineException::class);
+
         // Parsing file with duplicate column names in one table throws exception
         $appData = $xmlToAppData->parseString($schema);
     }
 
-    /**
-     * @expectedException EngineException
-     */
     public function testUniqueTableName()
     {
         $xmlToAppData = new XmlToAppData();
@@ -198,6 +189,8 @@ EOF;
     </table>
 </database>
 EOF;
+        $this->expectException(EngineException::class);
+
         // Parsing file with duplicate table name throws exception
         $appData = $xmlToAppData->parseString($schema);
     }

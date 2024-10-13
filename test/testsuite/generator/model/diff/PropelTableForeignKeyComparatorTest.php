@@ -9,11 +9,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../../generator/lib/model/diff/PropelTableComparator.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/model/diff/PropelTableDiff.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/platform/MysqlPlatform.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/model/Database.php';
-
 /**
  * Tests for the Column methods of the PropelTableComparator service class.
  *
@@ -21,7 +16,10 @@ require_once dirname(__FILE__) . '/../../../../../generator/lib/model/Database.p
  */
 class PropelTableForeignKeyComparatorTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    /** @var MysqlPlatform */
+    private $platform;
+
+    public function setUp(): void
     {
         $this->platform = new MysqlPlatform();
     }

@@ -8,8 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../tools/helpers/schemas/SchemasTestBase.php';
-
 /**
  * Test class for PHP5TableMapBuilder with schemas.
  *
@@ -21,7 +19,7 @@ class GeneratedRelationMapWithSchemasTest extends SchemasTestBase
 {
     protected $databaseMap;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->databaseMap = Propel::getDatabaseMap('bookstore-schemas');

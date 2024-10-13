@@ -13,18 +13,10 @@
  *
  *  Example Usage:
  *
- *  require_once 'propel/util/PropelPager.php';
- *  require_once 'PEACH/Propel/Poem/poemPeer.php';
- *
  *  $c = new Criteria();
  *  $c->addDescendingOrderByColumn(poemPeer::SID);
  *
- *  // with join
- *  $pager = new PropelPager($c, 'poemPeer', 'doSelectJoinPoemUsers', 1, 50);
- *
- *  // without Join
- *
- *  $pager = new PropelPager($c, 'poemPeer', 'doSelect', 1, 50);
+ *  $pager = new PropelPager($c, 'poemPeer', 1, 50);
  *
  * Some template:
  *
@@ -92,12 +84,12 @@
  */
 class PropelPager implements Countable, Iterator
 {
+    const PEER_COUNT_METHOD = 'doCount';
+    const PEER_SELECT_METHOD = 'doSelect';
 
     private $recordCount;
     private $pages;
     private $peerClass;
-    private $peerSelectMethod;
-    private $peerCountMethod;
     private $criteria;
     private $countCriteria;
     private $page;
@@ -117,19 +109,16 @@ class PropelPager implements Countable, Iterator
      *
      * @param Criteria $c
      * @param string   $peerClass        The name of the static Peer class.
-     * @param string   $peerSelectMethod The name of the static method for selecting content from the Peer class.
      * @param int      $page             The current page (1-based).
      * @param int      $rowsPerPage      The number of rows that should be displayed per page.
      */
-    public function __construct($c = null, $peerClass = null, $peerSelectMethod = null, $page = 1, $rowsPerPage = 25)
+    public function __construct($c = null, $peerClass = null, $page = 1, $rowsPerPage = 25)
     {
         if (!isset($c)) {
             $c = new Criteria();
         }
         $this->setCriteria($c);
         $this->setPeerClass($peerClass);
-        $this->setPeerSelectMethod($peerSelectMethod);
-        $this->guessPeerCountMethod();
         $this->setPage($page);
         $this->setRowsPerPage($rowsPerPage);
     }
@@ -163,7 +152,7 @@ class PropelPager implements Countable, Iterator
      *
      * @return void
      */
-    public function setPeerClass($class)
+    public function setPeerClass(string $class)
     {
         $this->peerClass = $class;
     }
@@ -176,95 +165,6 @@ class PropelPager implements Countable, Iterator
     public function getPeerClass()
     {
         return $this->peerClass;
-    }
-
-    /**
-     * Set the Peer select method.
-     * This exists for legacy support, please use setPeerSelectMethod().
-     *
-     * @param string $method The name of the static method to call on the Peer class.
-     *
-     * @return void
-     * @see        setPeerSelectMethod()
-     * @deprecated
-     */
-    public function setPeerMethod($method)
-    {
-        $this->setPeerSelectMethod($method);
-    }
-
-    /**
-     * Return the Peer select method.
-     * This exists for legacy support, please use getPeerSelectMethod().
-     *
-     * @return string
-     * @see        getPeerSelectMethod()
-     * @deprecated
-     */
-    public function getPeerMethod()
-    {
-        return $this->getPeerSelectMethod();
-    }
-
-    /**
-     * Set the Peer select method.
-     *
-     * @param string $method The name of the static method to call on the Peer class.
-     *
-     * @return void
-     */
-    public function setPeerSelectMethod($method)
-    {
-        $this->peerSelectMethod = $method;
-    }
-
-    /**
-     * Return the Peer select method.
-     *
-     * @return string
-     */
-    public function getPeerSelectMethod()
-    {
-        return $this->peerSelectMethod;
-    }
-
-    /**
-     * Sets the Count method.
-     * This is set based on the Peer method, for example if Peer method is doSelectJoin*() then the
-     * count method will be doCountJoin*().
-     *
-     * @param string $method The name of the static method to call on the Peer class.
-     */
-    public function setPeerCountMethod($method)
-    {
-        $this->peerCountMethod = $method;
-    }
-
-    /**
-     * Return the Peer count method.
-     */
-    public function getPeerCountMethod()
-    {
-        return $this->peerCountMethod;
-    }
-
-    /**
-     * Guesses the Peer count method based on the select method.
-     */
-    private function guessPeerCountMethod()
-    {
-        $selectMethod = $this->getPeerSelectMethod();
-        if ($selectMethod == 'doSelect') {
-            $countMethod = 'doCount';
-        } elseif (($pos = stripos($selectMethod, 'doSelectJoin')) === 0) {
-            $countMethod = 'doCount' . substr($selectMethod, strlen('doSelect'));
-        } else {
-            // we will fall back to doCount() if we don't understand the join
-            // method; however, it probably won't be accurate.  Maybe triggering an error would
-            // be appropriate ...
-            $countMethod = 'doCount';
-        }
-        $this->setPeerCountMethod($countMethod);
     }
 
     /**
@@ -292,7 +192,7 @@ class PropelPager implements Countable, Iterator
     {
         $this->criteria->setOffset($this->start);
         $this->criteria->setLimit($this->max);
-        $this->rs = call_user_func(array($this->getPeerClass(), $this->getPeerSelectMethod()), $this->criteria);
+        $this->rs = call_user_func([$this->getPeerClass(), self::PEER_SELECT_METHOD], $this->criteria);
     }
 
     /**
@@ -527,7 +427,7 @@ class PropelPager implements Countable, Iterator
             $this->countCriteria->setLimit(0);
             $this->countCriteria->setOffset(0);
 
-            $this->recordCount = call_user_func(array($this->getPeerClass(), $this->getPeerCountMethod()), $this->countCriteria);
+            $this->recordCount = call_user_func([$this->getPeerClass(), self::PEER_COUNT_METHOD], $this->countCriteria);
         }
 
         return $this->recordCount;
@@ -560,7 +460,7 @@ class PropelPager implements Countable, Iterator
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->getResult());
     }
@@ -570,6 +470,7 @@ class PropelPager implements Countable, Iterator
      *
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function current()
     {
         if (!isset($this->rs)) {
@@ -584,6 +485,7 @@ class PropelPager implements Countable, Iterator
      *
      * @return int
      */
+    #[ReturnTypeWillChange]
     public function key()
     {
         return $this->currentKey;
@@ -594,7 +496,7 @@ class PropelPager implements Countable, Iterator
      *
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         $this->currentKey++;
     }
@@ -604,7 +506,7 @@ class PropelPager implements Countable, Iterator
      *
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->currentKey = 0;
     }
@@ -614,7 +516,7 @@ class PropelPager implements Countable, Iterator
      *
      * @return boolean
      */
-    public function valid()
+    public function valid(): bool
     {
         if (!isset($this->rs)) {
             $this->doRs();

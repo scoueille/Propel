@@ -9,8 +9,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/behavior/BookstoreSortableTestBase.php';
-
 /**
  * Tests for SortableBehavior class
  *
@@ -21,7 +19,7 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/behavior/
  */
 class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortableTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->populateTable12();
@@ -161,21 +159,19 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'insertAtRank() leaves other suites unchanged');
     }
 
-    /**
-     * @expectedException PropelException
-     */
     public function testInsertAtNegativeRank()
     {
+        $this->expectException(PropelException::class);
+
         $t = new Table12();
         $t->setScopeValue(1);
         $t->insertAtRank(0);
     }
 
-    /**
-     * @expectedException PropelException
-     */
     public function testInsertAtOverMaxRank()
     {
+        $this->expectException(PropelException::class);
+
         $t = new Table12();
         $t->setScopeValue(1);
         $t->insertAtRank(6);
@@ -283,29 +279,26 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(), 'moveToRank() can move down');
     }
 
-    /**
-     * @expectedException PropelException
-     */
     public function testMoveToNewObject()
     {
+        $this->expectException(PropelException::class);
+
         $t = new Table12();
         $t->moveToRank(2);
     }
 
-    /**
-     * @expectedException PropelException
-     */
     public function testMoveToNegativeRank()
     {
+        $this->expectException(PropelException::class);
+
         $t = Table12Peer::retrieveByRank(2, 1);
         $t->moveToRank(0);
     }
 
-    /**
-     * @expectedException PropelException
-     */
     public function testMoveToOverMaxRank()
     {
+        $this->expectException(PropelException::class);
+
         $t = Table12Peer::retrieveByRank(2, 1);
         $t->moveToRank(5);
     }
@@ -414,11 +407,10 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'removeFromList() leaves other suites unchanged');
     }
 
-    /**
-     * @expectedException PropelException
-     */
     public function testRemoveFromListNoScope()
     {
+        $this->expectException(PropelException::class);
+
         $t2 = Table12Peer::retrieveByRank(2);
         $t2->removeFromList();
     }

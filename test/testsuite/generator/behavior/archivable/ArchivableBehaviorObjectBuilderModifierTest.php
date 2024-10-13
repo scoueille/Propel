@@ -9,10 +9,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../../generator/lib/util/PropelQuickBuilder.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/behavior/archivable/ArchivableBehavior.php';
-require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
-
 /**
  * Tests for ArchivableBehavior class
  *
@@ -22,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
  */
 class ArchivableBehaviorObjectBuilderModifierTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('ArchivableTest10')) {
             $schema = <<<EOF
@@ -132,7 +128,7 @@ EOF;
         $archive = ArchivableTest10ArchiveQuery::create()
             ->filterById($a->getId())
             ->findOne();
-        $this->assertInstanceOf('ArchivableTest10Archive', $archive);
+        $this->assertInstanceOf(ArchivableTest10Archive::class, $archive);
         $this->assertEquals('foo', $archive->getTitle());
         $this->assertEquals(12, $archive->getAge());
     }
@@ -172,30 +168,28 @@ EOF;
         $a->setTitle('foo');
         $a->save();
         $ret = $a->archive();
-        $this->assertInstanceOf('ArchivableTest10Archive', $ret);
+        $this->assertInstanceOf(ArchivableTest10Archive::class, $ret);
         $this->assertEquals($a->getPrimaryKey(), $ret->getPrimaryKey());
         $this->assertEquals($a->getTitle(), $ret->getTitle());
     }
 
-    /**
-     * @expectedException PropelException
-     */
     public function testArchiveThrowsExceptionOnNewObjects()
     {
+        $this->expectException(PropelException::class);
+
         $a = new ArchivableTest10();
         $a->archive();
     }
 
     public function testHasRestoreFromArchiveMethod()
     {
-        $this->assertTrue(method_exists('ArchivableTest10', 'restoreFromArchive'));
+        $this->assertTrue(method_exists(ArchivableTest10::class, 'restoreFromArchive'));
     }
 
-    /**
-     * @expectedException PropelException
-     */
     public function testRestoreFromArchiveThrowsExceptionOnUnarchivedObjects()
     {
+        $this->expectException(PropelException::class);
+
         $a = new ArchivableTest10();
         $a->setTitle('foo');
         $a->setAge(12);
@@ -272,7 +266,7 @@ EOF;
         $archive = MyOldArchivableTest30Query::create()
             ->filterById($a->getId())
             ->findOne();
-        $this->assertInstanceOf('MyOldArchivableTest30', $archive);
+        $this->assertInstanceOf(MyOldArchivableTest30::class, $archive);
         $this->assertEquals('foo', $archive->getTitle());
         $this->assertEquals(12, $archive->getAge());
     }
@@ -302,7 +296,7 @@ EOF;
         $archive = MyOldArchivableTest30Query::create()
             ->filterById($a->getId())
             ->findOne();
-        $this->assertInstanceOf('MyOldArchivableTest30', $archive);
+        $this->assertInstanceOf(MyOldArchivableTest30::class, $archive);
         $this->assertEquals('bar', $archive->getTitle());
         $this->assertEquals(12, $archive->getAge());
     }
@@ -319,7 +313,7 @@ EOF;
         $archive = ArchivableTest10ArchiveQuery::create()
             ->filterById($a->getId())
             ->findOne();
-        $this->assertInstanceOf('ArchivableTest10Archive', $archive);
+        $this->assertInstanceOf(ArchivableTest10Archive::class, $archive);
         $this->assertEquals('foo', $archive->getTitle());
         $this->assertEquals(12, $archive->getAge());
     }

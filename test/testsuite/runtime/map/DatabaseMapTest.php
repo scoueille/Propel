@@ -8,8 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTestBase.php';
-
 /**
  * Test class for DatabaseMap.
  *
@@ -21,14 +19,14 @@ class DatabaseMapTest extends BookstoreTestBase
 {
   protected $databaseMap;
 
-  protected function setUp()
+  protected function setUp(): void
   {
     parent::setUp();
     $this->databaseName = 'foodb';
     $this->databaseMap = TestDatabaseBuilder::getDmap();
   }
 
-  protected function tearDown()
+  protected function tearDown(): void
   {
     // nothing to do for now
     parent::tearDown();

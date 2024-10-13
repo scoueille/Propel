@@ -8,8 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../tools/helpers/bookstore/BookstoreTestBase.php';
-
 /**
  * Tests the character encoding support of the adapter.
  *
@@ -33,7 +31,7 @@ class CharacterEncodingTest extends BookstoreTestBase
      */
     private $adapter;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         if (!extension_loaded('iconv')) {

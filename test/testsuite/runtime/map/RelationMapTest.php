@@ -8,11 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../runtime/lib/map/DatabaseMap.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/map/RelationMap.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/map/ColumnMap.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/map/TableMap.php';
-
 /**
  * Test class for RelationMap.
  *
@@ -24,7 +19,7 @@ class RelationMapTest extends \PHPUnit\Framework\TestCase
 {
   protected $databaseMap, $relationName, $rmap;
 
-  protected function setUp()
+  protected function setUp(): void
   {
     parent::setUp();
     $this->databaseMap = new DatabaseMap('foodb');

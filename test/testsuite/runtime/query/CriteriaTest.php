@@ -8,8 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTestBase.php';
-
 /**
  * Test class for Criteria.
  *
@@ -34,7 +32,7 @@ class CriteriaTest extends BookstoreTestBase
      */
     private $savedAdapter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->c = new Criteria();
@@ -42,7 +40,7 @@ class CriteriaTest extends BookstoreTestBase
         Propel::setDB(null, new DBSQLite());
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Propel::setDB(null, $this->savedAdapter);
         parent::tearDown();

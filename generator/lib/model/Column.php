@@ -8,13 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/XMLElement.php';
-require_once dirname(__FILE__) . '/../exception/EngineException.php';
-require_once dirname(__FILE__) . '/PropelTypes.php';
-require_once dirname(__FILE__) . '/Inheritance.php';
-require_once dirname(__FILE__) . '/Domain.php';
-require_once dirname(__FILE__) . '/ColumnDefaultValue.php';
-
 /**
  * A Class for holding data about a column used in an Application.
  *
@@ -147,7 +140,7 @@ class Column extends XMLElement
             if ($dom) {
                 $this->getDomain()->copy($this->getTable()->getDatabase()->getDomain($dom));
             } else {
-                $type = strtoupper($this->getAttribute("type"));
+                $type = strtoupper($this->getAttribute("type") ?? '');
                 if ($type) {
                     if ($platform = $this->getPlatform()) {
                         $this->getDomain()->copy($this->getPlatform()->getDomainForType($type));

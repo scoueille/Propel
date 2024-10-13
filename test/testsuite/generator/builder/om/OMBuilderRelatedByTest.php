@@ -8,11 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/BookstoreTestBase.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/builder/om/OMBuilder.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/builder/util/XmlToAppData.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/platform/DefaultPlatform.php';
-
 /**
  * Test class for OMBuilder.
  *
@@ -24,7 +19,7 @@ class OMBuilderRelatedByTest extends \PHPUnit\Framework\TestCase
 {
     public static $database;
 
-    public function setUp()
+    public function setUp(): void
     {
         // run only once to save execution time
         if (null == self::$database) {

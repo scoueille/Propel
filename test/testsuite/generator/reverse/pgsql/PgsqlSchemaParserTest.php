@@ -8,16 +8,7 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
-
-require_once dirname(__FILE__) . '/../../../../../generator/lib/reverse/pgsql/PgsqlSchemaParser.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/config/QuickGeneratorConfig.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/model/PropelTypes.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/model/Database.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/platform/DefaultPlatform.php';
-
 set_include_path(get_include_path().PATH_SEPARATOR.dirname(__FILE__).'/../../../../../generator/lib');
-require_once dirname(__FILE__) . '/../../../../../generator/lib/task/PropelConvertConfTask.php';
 
 /**
  * Tests for Pgsql database schema parser.
@@ -28,7 +19,7 @@ require_once dirname(__FILE__) . '/../../../../../generator/lib/task/PropelConve
  */
 class PgsqlSchemaParserTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->markTestSkipped('PGSQL unit test');
 
@@ -46,7 +37,7 @@ class PgsqlSchemaParserTest extends \PHPUnit\Framework\TestCase
         $this->con->beginTransaction();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if ($this->con) {
             $this->con->rollback();

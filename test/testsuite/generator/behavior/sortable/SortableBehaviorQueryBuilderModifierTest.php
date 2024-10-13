@@ -9,8 +9,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/behavior/BookstoreSortableTestBase.php';
-
 /**
  * Tests for SortableBehavior class query modifier
  *
@@ -20,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/behavior/
  */
 class SortableBehaviorQueryBuilderModifierTest extends BookstoreSortableTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->populateTable11();
@@ -51,11 +49,10 @@ class SortableBehaviorQueryBuilderModifierTest extends BookstoreSortableTestBase
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank, using the argument as sort direction');
     }
 
-    /**
-     * @expectedException PropelException
-     */
     public function testOrderByRankIncorrectDirection()
     {
+        $this->expectException(PropelException::class);
+
         Table11Query::create()->orderByRank('foo');
     }
 

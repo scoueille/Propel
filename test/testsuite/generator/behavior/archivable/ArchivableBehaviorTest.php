@@ -9,10 +9,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../../generator/lib/util/PropelQuickBuilder.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/behavior/archivable/ArchivableBehavior.php';
-require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
-
 /**
  * Tests for ArchivableBehavior class
  *
@@ -24,7 +20,7 @@ class ArchivableBehaviorTest extends \PHPUnit\Framework\TestCase
 {
     protected static $generatedSQL;
 
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('ArchivableTest1')) {
             $schema = <<<EOF
@@ -136,7 +132,7 @@ EOF;
     {
         $table = ArchivableTest1ArchivePeer::getTableMap();
         $this->assertTrue($table->hasColumn('id'));
-        $this->assertContains('[id] INTEGER NOT NULL,', self::$generatedSQL, 'copied columns are not autoincremented');
+        $this->assertStringContainsString('[id] INTEGER NOT NULL,', self::$generatedSQL, 'copied columns are not autoincremented');
         $this->assertTrue($table->hasColumn('title'));
         $this->assertTrue($table->hasColumn('age'));
         $this->assertTrue($table->hasColumn('foo_id'));
@@ -153,7 +149,7 @@ EOF;
         $table = ArchivableTest1ArchivePeer::getTableMap();
 
         $expected = "CREATE INDEX [archivable_test_1_archive_I_1] ON [archivable_test_1_archive] ([title],[age]);";
-        $this->assertContains($expected, self::$generatedSQL);
+        $this->assertStringContainsString($expected, self::$generatedSQL);
     }
 
     public function testCopiesUniquesToIndices()
@@ -161,7 +157,7 @@ EOF;
         $table = ArchivableTest2ArchivePeer::getTableMap();
 
         $expected = "CREATE INDEX [my_old_archivable_test_3_I_1] ON [my_old_archivable_test_3] ([title]);";
-        $this->assertContains($expected, self::$generatedSQL);
+        $this->assertStringContainsString($expected, self::$generatedSQL);
     }
 
     public function testAddsArchivedAtColumnToArchiveTableByDefault()
@@ -178,7 +174,7 @@ EOF;
 
     public function testDatabaseLevelBehavior()
     {
-            $schema = <<<EOF
+        $schema = <<<EOF
 <database name="archivable_behavior_test_0">
     <behavior name="archivable" />
     <table name="archivable_test_01">
@@ -188,9 +184,11 @@ EOF;
     </table>
 </database>
 EOF;
-            $builder = new PropelQuickBuilder();
-            $builder->setSchema($schema);
-            $builder->getSQL();
+        $builder = new PropelQuickBuilder();
+        $builder->setSchema($schema);
+        $builder->getSQL();
+
+        $this->expectNotToPerformAssertions();
     }
 
 }

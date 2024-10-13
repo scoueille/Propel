@@ -8,8 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/BookstoreEmptyTestBase.php';
-
 /**
  * Tests the delete methods of the generated Peer classes.
  *
@@ -27,7 +25,7 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/Bookstore
  */
 class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate();
@@ -412,9 +410,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     public function testDoCountType()
     {
         $c = new Criteria();
-        $this->assertInternalType('integer', BookPeer::doCount($c), "Expected doCount() to return an integer.");
-        $this->assertInternalType('integer', BookPeer::doCountJoinAll($c), "Expected doCountJoinAll() to return an integer.");
-        $this->assertInternalType('integer', BookPeer::doCountJoinAuthor($c), "Expected doCountJoinAuthor() to return an integer.");
+        $this->assertIsInt(BookPeer::doCount($c), "Expected doCount() to return an integer.");
     }
 
     /**
@@ -456,42 +452,6 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * Test doCountJoin*() methods.
-     */
-    public function testDoCountJoin()
-    {
-        BookPeer::doDeleteAll();
-
-        for ($i=0; $i < 25; $i++) {
-            $b = new Book();
-            $b->setTitle("Book $i");
-            $b->setISBN("ISBN $i");
-            $b->save();
-        }
-
-        $c = new Criteria();
-        $totalCount = BookPeer::doCount($c);
-
-        $this->assertEquals($totalCount, BookPeer::doCountJoinAuthor($c));
-        $this->assertEquals($totalCount, BookPeer::doCountJoinPublisher($c));
-    }
-
-    /**
-     * Test doCountJoin*() methods with ORDER BY columns in Criteria.
-     * @link http://trac.propelorm.org/ticket/627
-     */
-    public function testDoCountJoinWithOrderBy()
-    {
-        $c = new Criteria(BookPeer::DATABASE_NAME);
-        $c->addAscendingOrderByColumn(BookPeer::ID);
-
-        // None of these should not throw an exception!
-        BookPeer::doCountJoinAll($c);
-        BookPeer::doCountJoinAllExceptAuthor($c);
-        BookPeer::doCountJoinAuthor($c);
-    }
-
-    /**
      * Test passing null values to removeInstanceFromPool().
      */
     public function testRemoveInstanceFromPool_Null()
@@ -502,6 +462,8 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         } catch (Exception $x) {
             $this->fail("Expected to get no exception when removing an instance from the pool.");
         }
+
+        $this->expectNotToPerformAssertions();
     }
 
     /**

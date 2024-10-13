@@ -8,8 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreEmptyTestBase.php';
-
 /**
  * Test class for PropelObjectFormatter.
  *
@@ -19,7 +17,7 @@ require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreEmp
  */
 class PropelObjectFormatterTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -136,8 +134,9 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
     public function testFormatOneWithRelatedObjects()
     {
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
-        $con->useDebug(false);
-        $con->useDebug(true);
+
+        $this->useDebug($con, false);
+        $this->useDebug($con);
 
         $this->assertEquals(0, $con->getQueryCount());
 
@@ -159,11 +158,12 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, $con->getQueryCount());
     }
 
-    public function testFormaWithRelatedObjects()
+    public function testFormatWithRelatedObjects()
     {
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
-        $con->useDebug(false);
-        $con->useDebug(true);
+
+        $this->useDebug($con, false);
+        $this->useDebug($con);
 
         $this->assertEquals(0, $con->getQueryCount());
 

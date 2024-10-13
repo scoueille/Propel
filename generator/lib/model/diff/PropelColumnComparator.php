@@ -8,9 +8,6 @@
  * @license     MIT License
  */
 
-require_once dirname(__FILE__) . '/../Column.php';
-require_once dirname(__FILE__) . '/PropelColumnDiff.php';
-
 /**
  * Service class for comparing Column objects.
  * Heavily inspired by Doctrine2's Migrations
@@ -64,7 +61,7 @@ class PropelColumnComparator
         if ($fromDomain->getSize() != $toDomain->getSize()) {
             $changedProperties['size'] = array($fromDomain->getSize(), $toDomain->getSize());
         }
-        if (strtoupper($fromDomain->getSqlType()) != strtoupper($toDomain->getSqlType())) {
+        if (strtoupper($fromDomain->getSqlType()) != strtoupper($toDomain->getSqlType() ?? '')) {
             $changedProperties['sqlType'] = array($fromDomain->getSqlType(), $toDomain->getSqlType());
         }
         if ($fromColumn->isNotNull() != $toColumn->isNotNull()) {

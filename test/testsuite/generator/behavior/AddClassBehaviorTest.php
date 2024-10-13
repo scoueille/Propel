@@ -8,8 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTestBase.php';
-
 /**
  * Tests the generated classes by behaviors.
  *
@@ -21,6 +19,6 @@ class AddClassBehaviorTest extends BookstoreTestBase
   public function testClassExists()
   {
     $t = new AddClassTableFooClass();
-    $this->assertTrue($t instanceof AddClassTableFooClass, 'behaviors can generate classes that are autoloaded');
+    $this->assertInstanceOf(AddClassTableFooClass::class, $t, 'behaviors can generate classes that are autoloaded');
   }
 }

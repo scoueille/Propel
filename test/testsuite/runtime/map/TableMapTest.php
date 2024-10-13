@@ -8,12 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../runtime/lib/map/ColumnMap.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/map/RelationMap.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/map/TableMap.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/map/DatabaseMap.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/exception/PropelException.php';
-
 /**
  * Test class for TableMap.
  *
@@ -25,7 +19,7 @@ class TableMapTest extends \PHPUnit\Framework\TestCase
 {
   protected $databaseMap;
 
-  protected function setUp()
+  protected function setUp(): void
   {
     parent::setUp();
     $this->databaseMap = new DatabaseMap('foodb');
@@ -33,7 +27,7 @@ class TableMapTest extends \PHPUnit\Framework\TestCase
     $this->tmap = new TableMap($this->tableName, $this->databaseMap);
   }
 
-  protected function tearDown()
+  protected function tearDown(): void
   {
     // nothing to do for now
     parent::tearDown();
@@ -164,12 +158,11 @@ class TableMapTest extends \PHPUnit\Framework\TestCase
     $this->assertEquals($expected, $this->tmap->getForeignKeys(), 'getForeignKeys() returns an array of the table foreign keys');
   }
 
-    /**
-     * @expectedException PropelException
-     */
   public function testLoadWrongRelations()
   {
-    $this->tmap->getRelation('Bar');
+      $this->expectException(PropelException::class);
+
+      $this->tmap->getRelation('Bar');
   }
 
   public function testLazyLoadRelations()

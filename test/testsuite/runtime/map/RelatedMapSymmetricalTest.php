@@ -8,8 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTestBase.php';
-
 /**
  * Test class for RelatedMap::getSymmetricalRelation.
  *
@@ -21,7 +19,7 @@ class RelatedMapSymmetricalTest extends BookstoreTestBase
 {
   protected $databaseMap;
 
-  protected function setUp()
+  protected function setUp(): void
   {
       parent::setUp();
     $this->databaseMap = Propel::getDatabaseMap('bookstore');

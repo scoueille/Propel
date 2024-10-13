@@ -9,10 +9,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../../generator/lib/util/PropelQuickBuilder.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/behavior/versionable/VersionableBehavior.php';
-require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
-
 /**
  * Tests for VersionableBehavior class
  *
@@ -22,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
  */
 class VersionableBehaviorObjectBuilderModifierTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('VersionableBehaviorTest1')) {
             $schema = <<<XML
@@ -445,11 +441,10 @@ XML;
         $this->assertEquals(3, $o->getVersion());
     }
 
-    /**
-     * @expectedException PropelException
-     */
     public function testToVersionThrowsExceptionOnIncorrectVersion()
     {
+        $this->expectException(PropelException::class);
+
         $o = new VersionableBehaviorTest1();
         $o->setBar(123); // version 1
         $o->save();
@@ -914,6 +909,8 @@ XML;
         $b2->save();
         $b1->setFoobar('test1');
         $b1->save();
+
+        $this->expectNotToPerformAssertions();
     }
 
     public function testWithInheritance()
@@ -967,10 +964,10 @@ XML;
         $this->assertEquals(1, $bar->getVersion());
 
         $foo = VersionableBehaviorTest13Query::create()->findOne();
-        $this->assertInstanceOf('VersionableBehaviorTest13', $foo);
+        $this->assertInstanceOf(VersionableBehaviorTest13::class, $foo);
 
         $bar = $foo->getVersionableBehaviorTest14();
-        $this->assertInstanceOf('VersionableBehaviorTest14', $bar);
+        $this->assertInstanceOf(VersionableBehaviorTest14::class, $bar);
 
         $this->assertFalse($foo->isVersioningNecessary());
 

@@ -8,8 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/BookstoreEmptyTestBase.php';
-
 /**
  * Tests the generated Object classes.
  *
@@ -24,12 +22,6 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/Bookstore
  */
 class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-        require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/behavior/TestAuthor.php';
-    }
-
     /**
      * Test the reload() method.
      */
@@ -151,12 +143,12 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         // reload and verify that the types are the same
         $r2 = ReviewPeer::retrieveByPK($id);
 
-        $this->assertInternalType('integer', $r2->getId(), "Expected getId() to return an integer.");
-        $this->assertInternalType('string', $r2->getReviewedBy(), "Expected getReviewedBy() to return a string.");
-        $this->assertInternalType('boolean', $r2->getRecommended(), "Expected getRecommended() to return a boolean.");
-        $this->assertInstanceOf('Book', $r2->getBook(), "Expected getBook() to return a Book.");
-        $this->assertInternalType('float', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
-        $this->assertInstanceOf('DateTime', $r2->getReviewDate(null), "Expected Book->getReviewDate() to return a DateTime.");
+        $this->assertIsInt($r2->getId(), "Expected getId() to return an integer.");
+        $this->assertIsString($r2->getReviewedBy(), "Expected getReviewedBy() to return a string.");
+        $this->assertIsBool($r2->getRecommended(), "Expected getRecommended() to return a boolean.");
+        $this->assertInstanceOf(Book::class, $r2->getBook(), "Expected getBook() to return a Book.");
+        $this->assertIsFloat($r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
+        $this->assertInstanceOf(DateTime::class, $r2->getReviewDate(null), "Expected Book->getReviewDate() to return a DateTime.");
 
     }
 
@@ -199,6 +191,8 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         }
 
         $this->con->beginTransaction();
+
+        $this->expectNotToPerformAssertions();
     }
 
     /**
@@ -252,7 +246,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $reviews = $book->getReviews();
 
         $b2 = $book->copy(true);
-        $this->assertInstanceOf('Book', $b2);
+        $this->assertInstanceOf(Book::class, $b2);
         $this->assertNull($b2->getId());
 
         $r2 = $b2->getReviews();
@@ -263,7 +257,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $emp = BookstoreEmployeePeer::doSelectOne(new Criteria());
         $e2 = $emp->copy(true);
 
-        $this->assertInstanceOf('BookstoreEmployee', $e2);
+        $this->assertInstanceOf(BookstoreEmployee::class, $e2);
         $this->assertNull($e2->getId());
 
         $this->assertEquals($emp->getBookstoreEmployeeAccount()->getLogin(), $e2->getBookstoreEmployeeAccount()->getLogin());
@@ -288,7 +282,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 
         $arr1 = $m->toArray(BasePeer::TYPE_COLNAME);
         $this->assertNotNull($arr1[MediaPeer::COVER_IMAGE]);
-        $this->assertInternalType('resource', $arr1[MediaPeer::COVER_IMAGE]);
+        $this->assertIsResource($arr1[MediaPeer::COVER_IMAGE]);
 
         $arr2 = $m->toArray(BasePeer::TYPE_COLNAME, false);
         $this->assertNull($arr2[MediaPeer::COVER_IMAGE]);
@@ -308,12 +302,13 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         AuthorPeer::clearInstancePool();
         PublisherPeer::clearInstancePool();
 
-        $c = new Criteria();
-        $c->add(BookPeer::TITLE, 'Don Juan');
-        $books = BookPeer::doSelectJoinAuthor($c);
+        $books = BookQuery::create()
+            ->filterByTitle('Don Juan')
+            ->joinWith('Author')
+            ->find();
         $book = $books[0];
 
-        $arr1 = $book->toArray(BasePeer::TYPE_PHPNAME, null, array(), true);
+        $arr1 = $book->toArray(BasePeer::TYPE_PHPNAME, null, [], true);
         $expectedKeys = array(
             'Id',
             'Title',
@@ -326,13 +321,15 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() can return sub arrays for hydrated related objects');
         $this->assertEquals('George', $arr1['Author']['FirstName'], 'toArray() can return sub arrays for hydrated related objects');
 
-        $c = new Criteria();
-        $c->add(BookPeer::TITLE, 'Don Juan');
-        $books = BookPeer::doSelectJoinAll($c);
+        $books = BookQuery::create()
+            ->filterByTitle('Don Juan')
+            ->joinWith('Author')
+            ->joinWith('Publisher')
+            ->find();
         $book = $books[0];
 
-        $arr2 = $book->toArray(BasePeer::TYPE_PHPNAME, null, array(), true);
-        $expectedKeys = array(
+        $arr2 = $book->toArray(BasePeer::TYPE_PHPNAME, null, [], true);
+        $expectedKeys = [
             'Id',
             'Title',
             'ISBN',
@@ -340,8 +337,8 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
             'PublisherId',
             'AuthorId',
             'Publisher',
-            'Author'
-        );
+            'Author',
+        ];
         $this->assertEquals($expectedKeys, array_keys($arr2), 'toArray() can return sub arrays for hydrated related objects');
     }
 

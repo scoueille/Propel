@@ -8,8 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../../generator/lib/util/PropelQuickBuilder.php';
-require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
 
 /**
  * Tests the generated objects for enum column types accessor & mutator
@@ -19,7 +17,7 @@ require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
  */
 class GeneratedObjectEnumColumnTypeTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('ComplexColumnTypeEntity3')) {
             $schema = <<<EOF
@@ -57,11 +55,10 @@ EOF;
         $this->assertEquals('foo bar', $e->getBar());
     }
 
-    /**
-     * @expectedException PropelException
-     */
     public function testGetterThrowsExceptionOnUnknownKey()
     {
+        $this->expectException(PropelException::class);
+
         $e = new PublicComplexColumnTypeEntity3();
         $e->bar = 156;
         $e->getBar();
@@ -87,11 +84,10 @@ EOF;
         $this->assertEquals(6, $e->bar);
     }
 
-    /**
-     * @expectedException PropelException
-     */
     public function testSetterThrowsExceptionOnUnknownValue()
     {
+        $this->expectException(PropelException::class);
+
         $e = new ComplexColumnTypeEntity3();
         $e->setBar('bazz');
     }

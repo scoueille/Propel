@@ -8,8 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTestBase.php';
-
 /**
  * Tests the generated Peer behavior hooks.
  *
@@ -45,7 +43,6 @@ class PeerBehaviorTest extends BookstoreTestBase
     $con->preSelect = 0;
     Table3Peer::doSelectStmt(new Criteria, $con);
     $this->assertNotEquals($con->preSelect, 0, 'preSelect hook is called in doSelectStmt()');
-    // and for the doSelectJoin and doCountJoin methods, well just believe my word
 
     $con->preSelect = 0;
     Table3Peer::doSelect(new Criteria, $con);

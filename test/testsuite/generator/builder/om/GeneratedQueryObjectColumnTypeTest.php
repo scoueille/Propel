@@ -8,9 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../../generator/lib/util/PropelQuickBuilder.php';
-require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
-
 /**
  * Tests the generated queries for object column types filters
  *
@@ -21,7 +18,7 @@ class GeneratedQueryObjectColumnTest extends \PHPUnit\Framework\TestCase
 {
     protected $c1, $c2;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->c1 = new FooColumnValue2();
         $this->c1->bar = 1234;

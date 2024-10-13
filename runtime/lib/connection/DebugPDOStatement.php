@@ -81,7 +81,10 @@ class DebugPDOStatement extends PDOStatement
                     $boundValue = trim($boundValue, "'");
                     $boundValue = $this->pdo->quote($boundValue);
                 }
-                $sql = str_replace($pos, $boundValue, $sql);
+                if (is_resource($boundValue)) {
+                    $boundValue = '[resource]';
+                }
+                $sql = str_replace($pos, $boundValue ?? '', $sql);
             }
         }
 
@@ -96,12 +99,12 @@ class DebugPDOStatement extends PDOStatement
      *
      * @return boolean
      */
-    public function execute($input_parameters = null)
+    public function execute($input_parameters = null): bool
     {
         $debug = $this->pdo->getDebugSnapshot();
         $return = parent::execute($input_parameters);
 
-        $sql = $this->getExecutedQueryString($input_parameters?$input_parameters:array());
+        $sql = $this->getExecutedQueryString($input_parameters ?: []);
         $this->pdo->log($sql, null, __METHOD__, $debug);
         $this->pdo->setLastExecutedQuery($sql);
         $this->pdo->incrementQueryCount();
@@ -119,7 +122,7 @@ class DebugPDOStatement extends PDOStatement
      *
      * @return boolean
      */
-    public function bindValue($pos, $value, $type = PDO::PARAM_STR)
+    public function bindValue($pos, $value, $type = PDO::PARAM_STR): bool
     {
         $debug = $this->pdo->getDebugSnapshot();
         $typestr = isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';
@@ -148,8 +151,9 @@ class DebugPDOStatement extends PDOStatement
      *
      * @return boolean
      */
-    public function bindParam($pos, &$value, $type = PDO::PARAM_STR, $length = 0, $driver_options = null)
+    public function bindParam($pos, &$value, $type = PDO::PARAM_STR, $length = null, $driver_options = null): bool
     {
+        $length = $length ?? 0;
         $originalValue = $value;
         $debug = $this->pdo->getDebugSnapshot();
         $typestr = isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';

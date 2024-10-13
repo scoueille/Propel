@@ -8,8 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreEmptyTestBase.php';
-
 /**
  * Test class for PropelOnDemandFormatter.
  *
@@ -51,9 +49,6 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
         }
     }
 
-    /**
-     * @expectedException PropelException
-     */
     public function testFormatManyResultsIteratedTwice()
     {
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
@@ -67,6 +62,9 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
         foreach ($books as $book) {
             // do nothing
         }
+
+        $this->expectException(PropelException::class);
+
         foreach ($books as $book) {
             // this should throw a PropelException since we're iterating a second time over a stream
         }

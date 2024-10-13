@@ -8,12 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/ScopedElement.php';
-require_once dirname(__FILE__) . '/IDMethod.php';
-require_once dirname(__FILE__) . '/NameGenerator.php';
-require_once dirname(__FILE__) . '/Table.php';
-require_once dirname(__FILE__) . '/Behavior.php';
-
 /**
  * A class for holding application data structures.
  *
@@ -432,7 +426,7 @@ class Database extends ScopedElement
             $this->tablesByName[$tbl->getName()] = $tbl;
             $this->tablesByLowercaseName[strtolower($tbl->getName())] = $tbl;
             $this->tablesByPhpName[$tbl->getPhpName()] = $tbl;
-            if (strpos($tbl->getNamespace(), '\\') === 0) {
+            if (strpos($tbl->getNamespace() ?? '', '\\') === 0) {
                 $tbl->setNamespace(substr($tbl->getNamespace(), 1));
             } elseif ($namespace = $this->getNamespace()) {
                 if ($tbl->getNamespace() === null) {

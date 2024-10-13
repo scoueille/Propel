@@ -8,9 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../tools/helpers/BaseTestCase.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/query/Criteria.php';
-
 Propel::init(dirname(__FILE__) . '/../../../fixtures/bookstore/build/conf/bookstore-conf.php');
 
 /**
@@ -29,14 +26,14 @@ class JoinTest extends BaseTestCase
    */
   private $savedAdapter;
 
-  protected function setUp()
+  protected function setUp(): void
   {
     parent::setUp();
     $this->savedAdapter = Propel::getDB(null);
     Propel::setDB(null, new DBSQLite());
   }
 
-  protected function tearDown()
+  protected function tearDown(): void
   {
     Propel::setDB(null, $this->savedAdapter);
     parent::tearDown();

@@ -9,10 +9,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../../generator/lib/util/PropelQuickBuilder.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/behavior/versionable/VersionableBehavior.php';
-require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
-
 /**
  * Tests for VersionableBehavior class
  *
@@ -23,7 +19,7 @@ require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
 class VersionableBehaviorPeerBuilderModifierTest extends \PHPUnit\Framework\TestCase
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('VersionableBehaviorTest10')) {
             $schema = <<<EOF

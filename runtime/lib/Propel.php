@@ -8,6 +8,9 @@
  * @license    MIT License
  */
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
+
 /**
  * Propel's main resource pool and initialization & configuration class.
  *
@@ -39,57 +42,57 @@ class Propel
     /**
      * A constant defining 'System is unusuable' logging level
      */
-    const LOG_EMERG = 0;
+    const LOG_EMERG = LogLevel::EMERGENCY;
 
     /**
      * A constant defining 'Immediate action required' logging level
      */
-    const LOG_ALERT = 1;
+    const LOG_ALERT = LogLevel::ALERT;
 
     /**
      * A constant defining 'Critical conditions' logging level
      */
-    const LOG_CRIT = 2;
+    const LOG_CRIT = LogLevel::CRITICAL;
 
     /**
      * A constant defining 'Error conditions' logging level
      */
-    const LOG_ERR = 3;
+    const LOG_ERR = LogLevel::ERROR;
 
     /**
      * A constant defining 'Warning conditions' logging level
      */
-    const LOG_WARNING = 4;
+    const LOG_WARNING = LogLevel::WARNING;
 
     /**
      * A constant defining 'Normal but significant' logging level
      */
-    const LOG_NOTICE = 5;
+    const LOG_NOTICE = LogLevel::NOTICE;
 
     /**
      * A constant defining 'Informational' logging level
      */
-    const LOG_INFO = 6;
+    const LOG_INFO = LogLevel::INFO;
 
     /**
      * A constant defining 'Debug-level messages' logging level
      */
-    const LOG_DEBUG = 7;
+    const LOG_DEBUG = LogLevel::DEBUG;
 
     /**
      * The class name for a PDO object.
      */
-    const CLASS_PDO = 'PDO';
+    const CLASS_PDO = PDO::class;
 
     /**
      * The class name for a PropelPDO object.
      */
-    const CLASS_PROPEL_PDO = 'PropelPDO';
+    const CLASS_PROPEL_PDO = PropelPDO::class;
 
     /**
      * The class name for a DebugPDO object.
      */
-    const CLASS_DEBUG_PDO = 'DebugPDO';
+    const CLASS_DEBUG_PDO = DebugPDO::class;
 
     /**
      * Constant used to request a READ connection (applies to replication).
@@ -132,14 +135,14 @@ class Propel
     private static $isInit = false;
 
     /**
-     * @var        Log optional logger
+     * @var        LoggerInterface optional logger
      */
     private static $logger = null;
 
     /**
      * @var        string The name of the database mapper class
      */
-    private static $databaseMapClass = 'DatabaseMap';
+    private static $databaseMapClass = DatabaseMap::class;
 
     /**
      * @var        bool Whether the object instance pooling is enabled
@@ -152,108 +155,6 @@ class Propel
     private static $forceMasterConnection = false;
 
     /**
-     * @var        string Base directory to use for autoloading. Initialized in self::initBaseDir()
-     */
-    protected static $baseDir;
-
-    /**
-     * @var        array A map of class names and their file paths for autoloading
-     */
-    protected static $autoloadMap = array(
-
-        'DBAdapter'           => 'adapter/DBAdapter.php',
-        'DBMSSQL'             => 'adapter/DBMSSQL.php',
-        'MssqlPropelPDO'      => 'adapter/MSSQL/MssqlPropelPDO.php',
-        'MssqlDebugPDO'       => 'adapter/MSSQL/MssqlDebugPDO.php',
-        'MssqlDateTime'       => 'adapter/MSSQL/MssqlDateTime.class.php',
-        'DBMySQL'             => 'adapter/DBMySQL.php',
-        'DBMySQLi'            => 'adapter/DBMySQLi.php',
-        'DBNone'              => 'adapter/DBNone.php',
-        'DBOracle'            => 'adapter/DBOracle.php',
-        'DBPostgres'          => 'adapter/DBPostgres.php',
-        'DBSQLite'            => 'adapter/DBSQLite.php',
-        'DBSybase'            => 'adapter/DBSybase.php',
-        'DBSQLSRV'            => 'adapter/DBSQLSRV.php',
-
-        'PropelArrayCollection' => 'collection/PropelArrayCollection.php',
-        'PropelCollection'    => 'collection/PropelCollection.php',
-        'PropelObjectCollection' => 'collection/PropelObjectCollection.php',
-        'PropelOnDemandCollection' => 'collection/PropelOnDemandCollection.php',
-        'PropelOnDemandIterator' => 'collection/PropelOnDemandIterator.php',
-
-        'PropelConfiguration' => 'config/PropelConfiguration.php',
-        'PropelConfigurationIterator' => 'config/PropelConfigurationIterator.php',
-
-        'PropelPDO'           => 'connection/PropelPDO.php',
-        'DebugPDO'            => 'connection/DebugPDO.php',
-        'DebugPDOStatement'   => 'connection/DebugPDOStatement.php',
-
-        'PropelException'     => 'exception/PropelException.php',
-
-        'ModelWith'           => 'formatter/ModelWith.php',
-        'PropelArrayFormatter' => 'formatter/PropelArrayFormatter.php',
-        'PropelFormatter'     => 'formatter/PropelFormatter.php',
-        'PropelObjectFormatter' => 'formatter/PropelObjectFormatter.php',
-        'PropelOnDemandFormatter' => 'formatter/PropelOnDemandFormatter.php',
-        'PropelStatementFormatter' => 'formatter/PropelStatementFormatter.php',
-        'PropelSimpleArrayFormatter' => 'formatter/PropelSimpleArrayFormatter.php',
-
-        'BasicLogger'         => 'logger/BasicLogger.php',
-        'MojaviLogAdapter'    => 'logger/MojaviLogAdapter.php',
-
-        'ColumnMap'           => 'map/ColumnMap.php',
-        'DatabaseMap'         => 'map/DatabaseMap.php',
-        'TableMap'            => 'map/TableMap.php',
-        'RelationMap'         => 'map/RelationMap.php',
-        'ValidatorMap'        => 'map/ValidatorMap.php',
-
-        'BaseObject'          => 'om/BaseObject.php',
-        'NodeObject'          => 'om/NodeObject.php',
-        'Persistent'          => 'om/Persistent.php',
-        'PreOrderNodeIterator' => 'om/PreOrderNodeIterator.php',
-        'NestedSetPreOrderNodeIterator' => 'om/NestedSetPreOrderNodeIterator.php',
-        'NestedSetRecursiveIterator' => 'om/NestedSetRecursiveIterator.php',
-
-        'PropelCSVParser'     => 'parser/PropelCSVParser.php',
-        'PropelJSONParser'    => 'parser/PropelJSONParser.php',
-        'PropelParser'        => 'parser/PropelParser.php',
-        'PropelXMLParser'     => 'parser/PropelXMLParser.php',
-        'PropelYAMLParser'    => 'parser/PropelYAMLParser.php',
-
-        'Criteria'            => 'query/Criteria.php',
-        'Criterion'           => 'query/Criterion.php',
-        'CriterionIterator'   => 'query/CriterionIterator.php',
-        'Join'                => 'query/Join.php',
-        'ModelCriteria'       => 'query/ModelCriteria.php',
-        'ModelCriterion'      => 'query/ModelCriterion.php',
-        'ModelJoin'           => 'query/ModelJoin.php',
-        'PropelQuery'         => 'query/PropelQuery.php',
-
-        'BasePeer'            => 'util/BasePeer.php',
-        'NodePeer'            => 'util/NodePeer.php',
-        'PeerInfo'            => 'util/PeerInfo.php',
-        'PropelAutoloader'    => 'util/PropelAutoloader.php',
-        'PropelColumnTypes'   => 'util/PropelColumnTypes.php',
-        'PropelConditionalProxy' => 'util/PropelConditionalProxy.php',
-        'PropelModelPager'    => 'util/PropelModelPager.php',
-        'PropelPager'         => 'util/PropelPager.php',
-        'PropelDateTime'      => 'util/PropelDateTime.php',
-
-        'BasicValidator'      => 'validator/BasicValidator.php',
-        'MatchValidator'      => 'validator/MatchValidator.php',
-        'MaxLengthValidator'  => 'validator/MaxLengthValidator.php',
-        'MaxValueValidator'   => 'validator/MaxValueValidator.php',
-        'MinLengthValidator'  => 'validator/MinLengthValidator.php',
-        'MinValueValidator'   => 'validator/MinValueValidator.php',
-        'NotMatchValidator'   => 'validator/NotMatchValidator.php',
-        'RequiredValidator'   => 'validator/RequiredValidator.php',
-        'TypeValidator'       => 'validator/TypeValidator.php',
-        'UniqueValidator'     => 'validator/UniqueValidator.php',
-        'ValidValuesValidator' => 'validator/ValidValuesValidator.php',
-        'ValidationFailed'    => 'validator/ValidationFailed.php',
-    );
-
-    /**
      * Initializes Propel
      *
      * @throws PropelException Any exceptions caught during processing will be
@@ -264,8 +165,6 @@ class Propel
         if (self::$configuration === null) {
             throw new PropelException("Propel cannot be initialized without a valid configuration. Please check the log files for further details.");
         }
-
-        self::configureLogging();
 
         // check whether the generated model has the same version as the runtime, see gh-#577
         // we need to check for existance first, because tasks which rely on the runtime.xml conf will not provide a generator_version
@@ -280,11 +179,6 @@ class Propel
 
         // reset the connection map (this should enable runtime changes of connection params)
         self::$connectionMap = array();
-
-        if (isset(self::$configuration['classmap']) && is_array(self::$configuration['classmap'])) {
-            PropelAutoloader::getInstance()->addClassPaths(self::$configuration['classmap']);
-            PropelAutoloader::getInstance()->register();
-        }
 
         self::$isInit = true;
     }
@@ -304,25 +198,6 @@ class Propel
             throw new PropelException("Unable to open configuration file: " . var_export($configFile, true));
         }
         self::setConfiguration($configuration);
-    }
-
-    /**
-     * Configure the logging system, if config is specified in the runtime configuration.
-     */
-    protected static function configureLogging()
-    {
-        if (self::$logger === null) {
-            if (isset(self::$configuration['log']) && is_array(self::$configuration['log']) && count(self::$configuration['log'])) {
-                include_once 'Log.php'; // PEAR Log class
-                $c = self::$configuration['log'];
-                $type = isset($c['type']) ? $c['type'] : 'file';
-                $name = isset($c['name']) ? $c['name'] : './propel.log';
-                $ident = isset($c['ident']) ? $c['ident'] : 'propel';
-                $conf = isset($c['conf']) ? $c['conf'] : array();
-                $level = isset($c['level']) ? $c['level'] : PEAR_LOG_DEBUG;
-                self::$logger = Log::singleton($type, $name, $ident, $conf, $level);
-            } // if isset()
-        }
     }
 
     /**
@@ -387,24 +262,19 @@ class Propel
      * This is primarily for things like unit tests / debugging where
      * you want to change the logger without altering the configuration file.
      *
-     * You can use any logger class that implements the propel.logger.BasicLogger
-     * interface.  This interface is based on PEAR::Log, so you can also simply pass
-     * a PEAR::Log object to this method.
-     *
-     * @param      object The new logger to use. ([PEAR] Log or BasicLogger)
+     * @param LoggerInterface|null  $logger
      */
-    public static function setLogger($logger)
+    public static function setLogger(?LoggerInterface $logger): void
     {
         self::$logger = $logger;
     }
 
     /**
-     * Returns true if a logger, for example PEAR::Log, has been configured,
-     * otherwise false.
+     * Returns true if a logger has been configured, otherwise false.
      *
      * @return bool True if Propel uses logging
      */
-    public static function hasLogger()
+    public static function hasLogger(): bool
     {
         return (self::$logger !== null);
     }
@@ -412,9 +282,9 @@ class Propel
     /**
      * Get the configured logger.
      *
-     * @return object Configured log class ([PEAR] Log or BasicLogger).
+     * @return LoggerInterface|null Configured logger
      */
-    public static function logger()
+    public static function logger(): ?LoggerInterface
     {
         return self::$logger;
     }
@@ -424,36 +294,15 @@ class Propel
      * If a logger has been configured, the logger will be used, otherwrise the
      * logging message will be discarded without any further action
      *
-     * @param      string The message that will be logged.
-     * @param      string The logging level.
-     *
-     * @return bool True if the message was logged successfully or no logger was used.
+     * @param string  $message The message that will be logged.
+     * @param string  $level   The logging level.
      */
-    public static function log($message, $level = self::LOG_DEBUG)
+    public static function log(string $message, string $level = LogLevel::DEBUG): void
     {
         if (self::hasLogger()) {
             $logger = self::logger();
-            switch ($level) {
-                case self::LOG_EMERG:
-                    return $logger->log($message, $level);
-                case self::LOG_ALERT:
-                    return $logger->alert($message);
-                case self::LOG_CRIT:
-                    return $logger->crit($message);
-                case self::LOG_ERR:
-                    return $logger->err($message);
-                case self::LOG_WARNING:
-                    return $logger->warning($message);
-                case self::LOG_NOTICE:
-                    return $logger->notice($message);
-                case self::LOG_INFO:
-                    return $logger->info($message);
-                default:
-                    return $logger->debug($message);
-            }
+            $logger->log($level, $message);
         }
-
-        return true;
     }
 
     /**
@@ -666,8 +515,8 @@ class Propel
         }
 
         $dsn = $conparams['dsn'];
-        $user = isset($conparams['user']) ? $conparams['user'] : null;
-        $password = isset($conparams['password']) ? $conparams['password'] : null;
+        $user = $conparams['user'] ?? null;
+        $password = $conparams['password'] ?? null;
 
         // load any driver options from the config file
         // driver options are those PDO settings that have to be passed during the connection construction
@@ -752,7 +601,7 @@ class Propel
      *
      * @throws PropelException If unable to find DBdapter for specified db.
      */
-    public static function getDB($name = null)
+    public static function getDB($name = null): DBAdapter
     {
         if ($name === null) {
             $name = self::getDefaultDB();
@@ -814,76 +663,6 @@ class Propel
     }
 
     /**
-     * Autoload function for loading propel dependencies.
-     *
-     * @param      string The class name needing loading.
-     *
-     * @return boolean TRUE if the class was loaded, false otherwise.
-     */
-    public static function autoload($className)
-    {
-        if (isset(self::$autoloadMap[$className])) {
-            require self::$baseDir . self::$autoloadMap[$className];
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Initialize the base directory for the autoloader.
-     * Avoids a call to dirname(__FILE__) each time self::autoload() is called.
-     * FIXME put in the constructor if the Propel class ever becomes a singleton
-     */
-    public static function initBaseDir()
-    {
-        self::$baseDir = dirname(__FILE__) . '/';
-    }
-
-    /**
-     * Include once a file specified in DOT notation and return unqualified classname.
-     *
-     * Typically, Propel uses autoload is used to load classes and expects that all classes
-     * referenced within Propel are included in Propel's autoload map.  This method is only
-     * called when a specific non-Propel classname was specified -- for example, the
-     * classname of a validator in the schema.xml.  This method will attempt to include that
-     * class via autoload and then relative to a location on the include_path.
-     *
-     * @param string $class dot-path to clas (e.g. path.to.my.ClassName).
-     *
-     * @return string unqualified classname
-     *
-     * @throws PropelException
-     */
-    public static function importClass($path)
-    {
-        // extract classname
-        if (($pos = strrpos($path, '.')) === false) {
-            $class = $path;
-        } else {
-            $class = substr($path, $pos + 1);
-        }
-
-        // check if class exists, using autoloader to attempt to load it.
-        if (class_exists($class, $useAutoload = true)) {
-            return $class;
-        }
-
-        // turn to filesystem path
-        $path = strtr($path, '.', DIRECTORY_SEPARATOR) . '.php';
-
-        // include class
-        $ret = include_once($path);
-        if ($ret === false) {
-            throw new PropelException("Unable to import class: " . $class . " from " . $path);
-        }
-
-        // return qualified name
-        return $class;
-    }
-
-    /**
      * Set your own class-name for Database-Mapping. Then
      * you can change the whole TableMap-Model, but keep its
      * functionality for Criteria.
@@ -936,12 +715,4 @@ class Propel
     {
         return self::$instancePoolingEnabled;
     }
-}
-
-// Since the Propel class is not a true singleton, this code cannot go into the __construct()
-Propel::initBaseDir();
-spl_autoload_register(array('Propel', 'autoload'));
-
-if (version_compare(PHP_VERSION, '5.3.0', '<')) {
-    require_once dirname(__FILE__) . '/../stubs/functions.php';
 }

@@ -8,8 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/BookstoreEmptyTestBase.php';
-
 /**
  * Tests relationships between generated Object classes.
  *
@@ -29,7 +27,7 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/Bookstore
 class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 {
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
     }
@@ -379,21 +377,6 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $books = $author->getBooks(null, $con);
         $sql = $con->getLastExecutedQuery();
         $author = $books[0]->getAuthor($con);
-        $this->assertEquals($sql, $con->getLastExecutedQuery(), 'refFK getter uses instance pool if possible');
-    }
-
-    public function testRefFKGetJoin()
-    {
-        BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        PublisherPeer::clearInstancePool();
-        $con = Propel::getConnection(BookPeer::DATABASE_NAME);
-        $author = AuthorPeer::doSelectOne(new Criteria(), $con);
-        // populate book instance pool
-        $books = $author->getBooksJoinPublisher(null, $con);
-        $sql = $con->getLastExecutedQuery();
-        $publisher = $books[0]->getPublisher($con);
         $this->assertEquals($sql, $con->getLastExecutedQuery(), 'refFK getter uses instance pool if possible');
     }
 

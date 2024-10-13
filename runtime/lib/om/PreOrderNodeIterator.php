@@ -29,17 +29,11 @@ class PreOrderNodeIterator implements Iterator
     {
         $this->topNode = $node;
         $this->curNode = $node;
-
-        if (isset($opts['con'])) {
-            $this->con = $opts['con'];
-        }
-
-        if (isset($opts['querydb'])) {
-            $this->querydb = $opts['querydb'];
-        }
+        $this->con = $opts['con'] ?? null;
+        $this->querydb = $opts['querydb'] ?? false;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->curNode = $this->topNode;
     }

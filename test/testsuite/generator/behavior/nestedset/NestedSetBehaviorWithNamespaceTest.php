@@ -8,14 +8,9 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/BookstoreTestBase.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/util/PropelQuickBuilder.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/behavior/nestedset/NestedSetBehavior.php';
-require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
-
 class NestedSetBehaviorWithNamespaceTest extends BookstoreTestBase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -55,5 +50,7 @@ EOF;
         $obj1->save();
 
         $obj1->addChild(new \My\NestedSet1());
+
+        $this->expectNotToPerformAssertions();
     }
 }

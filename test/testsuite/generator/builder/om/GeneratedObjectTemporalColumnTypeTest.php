@@ -8,9 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../../generator/lib/util/PropelQuickBuilder.php';
-require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
-
 /**
  * Tests the generated objects for temporal column types accessor & mutator.
  * This requires that the model was built with propel.useDateTimeClass=true
@@ -20,7 +17,7 @@ require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
  */
 class GeneratedObjectTemporalColumnTypeTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('ComplexColumnTypeEntity5')) {
             $schema = <<<EOF
@@ -68,12 +65,12 @@ EOF;
         $this->assertEquals('1702-02-02', $r->getBar1(null)->format('Y-m-d'));
     }
 
-    /**
-     * @expectedException PropelException
-     */
     public function testInvalidValueThrowsPropelException()
     {
         $r = new ComplexColumnTypeEntity5();
+
+        $this->expectException(PropelException::class);
+
         $r->setBar1("Invalid Date");
     }
 

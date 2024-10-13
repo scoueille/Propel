@@ -16,7 +16,7 @@
  */
 class GeneratedObjectPhpNameTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -79,5 +79,7 @@ XML;
         // Should not result in "Fatal error: Class 'PhpNameTest\om\WriterQuery' not found"
         $page->removeAuthor($author);
         $page->save();
+
+        $this->expectNotToPerformAssertions();
     }
 }

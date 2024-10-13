@@ -9,10 +9,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../../generator/lib/util/PropelQuickBuilder.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/behavior/archivable/ArchivableBehavior.php';
-require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
-
 /**
  * Tests for ArchivableBehavior class
  *
@@ -22,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
  */
 class ArchivableBehaviorQueryBuilderModifierTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('ArchivableTest100')) {
             $schema = <<<EOF
@@ -102,7 +98,7 @@ EOF;
         $archive = ArchivableTest100ArchiveQuery::create()
             ->filterById($a->getId())
             ->findOne();
-        $this->assertInstanceOf('ArchivableTest100Archive', $archive);
+        $this->assertInstanceOf(ArchivableTest100Archive::class, $archive);
         $this->assertEquals('foo', $archive->getTitle());
         $this->assertEquals(12, $archive->getAge());
     }

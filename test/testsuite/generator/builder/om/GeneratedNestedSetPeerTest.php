@@ -8,8 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../tools/helpers/cms/CmsTestBase.php';
-
 /**
  * Tests the generated nested-set Object classes.
  *
@@ -174,10 +172,11 @@ class GeneratedNestedSetPeerTest extends CmsTestBase
 
     /**
      * Test xxxNestedSetPeer::createRoot() exception
-     * @expectedException PropelException
      */
     public function testPeerCreateRootException()
     {
+        $this->expectException(PropelException::class);
+
         $c = new Criteria();
         $c->add(PagePeer::TITLE, 'home', Criteria::EQUAL);
 

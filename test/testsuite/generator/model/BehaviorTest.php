@@ -8,11 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../generator/lib/model/Behavior.php';
-require_once dirname(__FILE__) . '/../../../../generator/lib/model/Table.php';
-require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
-require_once dirname(__FILE__) . '/../../../../generator/lib/behavior/TimestampableBehavior.php';
-
 /**
  * Tests for Behavior class
  *
@@ -95,9 +90,6 @@ EOF;
         $this->assertEquals(array('create_column' => 'created_on', 'update_column' => 'updated_on', 'disable_updated_at' => 'false'), $behavior->getParameters(), 'XmlToAppData sets the behavior parameters correctly');
     }
 
-  /**
-   * @expectedException InvalidArgumentException
-   */
     public function testUnknownBehavior()
     {
         $xmlToAppData = new XmlToAppData();
@@ -109,6 +101,8 @@ EOF;
   </table>
 </database>
 EOF;
+        $this->expectException(InvalidArgumentException::class);
+
         $appData = $xmlToAppData->parseString($schema);
     }
 

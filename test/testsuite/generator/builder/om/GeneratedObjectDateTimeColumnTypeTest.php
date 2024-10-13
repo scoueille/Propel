@@ -8,9 +8,6 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../../../generator/lib/util/PropelQuickBuilder.php';
-require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
-
 /**
  * Tests the generated objects for temporal column types accessor & mutator.
  * This requires that the model was built with propel.useDateTimeClass=true
@@ -20,7 +17,7 @@ require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
  */
 class GeneratedObjectDateTimeColumnTypeTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('DateTimeColumnTypeEntity')) {
             $schema = <<<EOF
@@ -47,5 +44,7 @@ EOF;
         $obj->setId(1);
         $obj->setPrimaryDate(new \DateTime());
         DateTimeColumnTypeEntityPeer::addInstanceToPool($obj);
+
+        $this->expectNotToPerformAssertions();
     }
 }
