@@ -366,7 +366,7 @@ class PropelCollection extends ArrayObject
         ];
     }
 
-    public function __unserialize(array $data): void
+    public function __unserialize($data): void
     {
         $this->exchangeArray($data['data']);
         $this->model = $data['model'];
