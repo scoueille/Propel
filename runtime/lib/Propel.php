@@ -32,7 +32,7 @@ class Propel
     /**
      * The Propel version.
      */
-    const VERSION = '2.1.2-propeller-orm';
+    const VERSION = '3.0.1-propeller-orm';
 
     /**
      * A constant for <code>default</code>.
